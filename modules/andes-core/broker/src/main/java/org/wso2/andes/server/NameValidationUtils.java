@@ -19,8 +19,11 @@
 package org.wso2.andes.server;
 
 import org.wso2.andes.configuration.AndesConfigurationManager;
+import org.wso2.andes.configuration.enums.AMQPAuthorizationPermissionLevel;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
 import org.wso2.andes.kernel.AndesConstants;
+import org.wso2.andes.server.queue.AMQQueue;
+import org.wso2.andes.server.security.AMQProtocolProcessor;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,6 +91,19 @@ public class NameValidationUtils {
 
         /* After validating the topic name, return if the given name is valid or not.*/
         return nameMatcher.matches();
+    }
+
+    /**
+     * Based on the broker configuration, checks whether the topic follows the predefined format.
+     *
+     * @param topicName Topic name with tenant domain, if created by a tenant
+     * @return true, if it is a authorized topic name, false otherwise
+     */
+    public static boolean isAuthorizedTopicName(String topicName, AMQQueue queue, AMQPAuthorizationPermissionLevel permissionLevel){
+        String username = queue.getAuthorizationHolder().getAuthorizedSubject().getPrincipals().iterator().next().getName();
+        AMQProtocolProcessor processor = new AMQProtocolProcessor(); //TODO: Make class singleton
+        processor.init();
+        return processor.processTopic(topicName, username, permissionLevel);
     }
 
     /**

@@ -24,6 +24,7 @@ import org.wso2.andes.AMQInternalException;
 import org.wso2.andes.AMQSecurityException;
 import org.wso2.andes.amqp.AMQPUtils;
 import org.wso2.andes.amqp.QpidAndesBridge;
+import org.wso2.andes.configuration.enums.AMQPAuthorizationPermissionLevel;
 import org.wso2.andes.configuration.qpid.BindingConfig;
 import org.wso2.andes.configuration.qpid.BindingConfigType;
 import org.wso2.andes.configuration.qpid.ConfigStore;
@@ -190,6 +191,10 @@ public class BindingFactory {
                             + NameValidationUtils.getNameWithoutTenantDomain(bindingKey)
                             + " can contain only alphanumeric characters and star(*) "
                             + "delimited by dots. Names can ends with any of these or, with '#' ");
+                } if (!NameValidationUtils.isAuthorizedTopicName(bindingKey, queue, AMQPAuthorizationPermissionLevel.SUBSCRIBE)) {
+                    throw new AMQInternalException("\nTopic name: "
+                            + NameValidationUtils.getNameWithoutTenantDomain(bindingKey)
+                            + " is unauthorized");
                 }
             }
 

@@ -147,6 +147,41 @@ public enum AndesConfiguration implements ConfigurationProperty {
             "10", Integer.class),
 
     /**
+     * Class name of the authenticator to use. class should inherit from {@link org.wso2.andes.server.security.access.amqp.IAuthenticator}
+     * <p>Note: default implementation authenticates against carbon user store based on supplied username/password
+     */
+//    TRANSPORTS_AMQP_USER_AUTHENTICATOR_CLASS("transports/amqp/security/authenticator/@class",
+//            "org.wso2.carbon.andes.authentication.andes.CarbonBasedAMQPAuthenticator", String.class), //TODO: CarbonBasedAMQPAuthenticator
+
+    /**
+     * Instructs the AMQP server to sending credential is required or optional.
+     */
+//    TRANSPORTS_AMQP_USER_AUTHENTICATION("transports/amqp/security/authentication", "OPTIONAL", AMQPUserAuthenticationScheme.class),
+
+    /**
+     * List of properties that can define how the server will authenticate the user with the authentication service.
+     */
+//    LIST_TRANSPORT_AMQP_AUTHENTICATION_PROPERTIES("transports/amqp/security/authenticator/property/@name", "", List.class),
+
+    /**
+     * This can be used to access a property by giving its key. e.g. hosturl
+     */
+//    TRANSPORT_AMQP_AUTHENTICATION_PROPERTIES("transports/amqp/security/authenticator/property[@name = '{key}']", "", String.class),
+
+    /**
+     * Instructs the AMQP server whether Authorization is required or not
+     */
+    TRANSPORTS_AMQP_USER_AUTHORIZATION("transports/amqp/security/authorization", "NOT_REQUIRED", AMQPUserAuthorizationScheme.class),
+
+    /**
+     * Class name of the authorizer to use. class should inherit from {@link org.wso2.andes.server.security.auth.amqp.IAuthorizer}
+     * <p>Note: default implementation authorize against carbon permission
+     */
+
+    TRANSPORTS_AMQP_USER_AUTHORIZATION_CLASS("transports/amqp/security/authorizer/@class",
+            "org.wso2.carbon.andes.authorization.andes.CarbonPermissionBasedAMQPAuthorizer", String.class), //TODO: CarbonPermissionBasedAMQPAuthorizer
+
+    /**
      * For durable topics there can be only one topic subscriber cluster-wide per a particular
      * client id. Enabling this configuration, multiple subscribers can use same client id and
      * share the messages
