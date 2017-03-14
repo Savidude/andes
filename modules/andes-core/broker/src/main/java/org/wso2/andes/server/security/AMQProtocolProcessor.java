@@ -56,8 +56,8 @@ public class AMQProtocolProcessor {
                 String authorizerClassName = AndesConfigurationManager.readValue(
                         AndesConfiguration.TRANSPORTS_AMQP_USER_AUTHORIZATION_CLASS);
                 try {
-                    Class<? extends IAuthorizer> authorizeClass = Class.forName(authorizerClassName).asSubclass(IAuthorizer.class);
-                    m_authorizer = authorizeClass.newInstance();
+                    Class authorizeClass = Class.forName(authorizerClassName).asSubclass(IAuthorizer.class);
+                    m_authorizer = (IAuthorizer) authorizeClass.newInstance();
                 } catch (ClassNotFoundException e) {
                     throw new AMQPInitializationException("Unable to find the class authorizer: " + authorizerClassName, e);
                 } catch (InstantiationException e) {
