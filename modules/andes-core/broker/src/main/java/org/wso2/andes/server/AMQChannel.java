@@ -23,6 +23,7 @@ import org.wso2.andes.AMQInternalException;
 import org.wso2.andes.AMQSecurityException;
 import org.wso2.andes.amqp.AMQPUtils;
 import org.wso2.andes.amqp.QpidAndesBridge;
+import org.wso2.andes.configuration.enums.AMQPAuthorizationPermissionLevel;
 import org.wso2.andes.configuration.qpid.ConfigStore;
 import org.wso2.andes.configuration.qpid.ConfiguredObject;
 import org.wso2.andes.configuration.qpid.ConnectionConfig;
@@ -76,6 +77,7 @@ import org.wso2.andes.server.queue.DLCQueueUtils;
 import org.wso2.andes.server.queue.IncomingMessage;
 import org.wso2.andes.server.queue.QueueEntry;
 import org.wso2.andes.server.registry.ApplicationRegistry;
+import org.wso2.andes.server.security.AMQProtocolProcessor;
 import org.wso2.andes.server.store.MessageStore;
 import org.wso2.andes.server.store.StorableMessageMetaData;
 import org.wso2.andes.server.store.StoredMessage;
@@ -388,6 +390,13 @@ public class AMQChannel implements SessionConfig, AMQSessionModel
         if (!getVirtualHost().getSecurityManager().authorisePublish(info.isImmediate(),
                 info.getRoutingKey().asString(), exchange.getName()) ||
                 DLCQueueUtils.isDeadLetterQueue(info.getRoutingKey().asString())) {
+            throw new AMQSecurityException("Permission denied: " + exchange.getName());
+        }
+        String username = this._session.getAuthorizedSubject().getPrincipals().iterator().next().getName();
+        String topic = info.getRoutingKey().asString();
+        AMQProtocolProcessor processor = new AMQProtocolProcessor(); //TODO: Make this singleton
+        processor.init();
+        if (!processor.processTopic(topic, username, AMQPAuthorizationPermissionLevel.PUBLISH)){
             throw new AMQSecurityException("Permission denied: " + exchange.getName());
         }
         _currentMessage = new IncomingMessage(info);
